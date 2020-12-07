@@ -14,15 +14,8 @@ import org.gradle.language.cpp.tasks.CppCompile
 import org.gradle.nativeplatform.tasks.LinkExecutable
 
 plugins {
-	id("eclipse")
+	id("sandpolis-module")
 	id("cpp-application")
-}
-
-eclipse {
-	project {
-		name = project.name
-		comment = project.name
-	}
 }
 
 application {
