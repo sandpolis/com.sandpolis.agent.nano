@@ -8,9 +8,9 @@ Build Protocol Buffer library:
 
 ```sh
 # Download release
-wget https://github.com/protocolbuffers/protobuf/releases/download/v3.11.3/protobuf-cpp-3.11.3.tar.gz
-tar xf protobuf-cpp-3.11.3.tar.gz
-cd protobuf-cpp-3.11.3
+wget https://github.com/protocolbuffers/protobuf/releases/download/v3.14.0/protobuf-cpp-3.14.0.tar.gz
+tar xf protobuf-cpp-3.14.0.tar.gz
+cd protobuf-3.14.0
 
 # Generate makefiles
 ./configure --disable-shared

@@ -34,14 +34,14 @@ application {
 }
 
 tasks.withType<LinkExecutable> {
-	lib {
-		file("/usr/local/lib/libprotobuf-lite.a")
-	}
+	lib(file("/usr/lib/x86_64-linux-gnu/libncursesw.a"))
+	lib(file("/usr/local/lib/libprotobuf-lite.a"))
+	linkerArgs.set(listOf("-ldl", "-ltinfo", "-lpthread"))
 }
 
 tasks.withType<CppCompile> {
 	dependsOn(":module:com.sandpolis.core.foundation:generateProto")
 	dependsOn(":module:com.sandpolis.core.instance:generateProto")
 	dependsOn(":module:com.sandpolis.core.net:generateProto")
-	compilerArgs.set(listOf("-pthread"))
+	compilerArgs.set(listOf("-pthread", "-std=c++20"))
 }

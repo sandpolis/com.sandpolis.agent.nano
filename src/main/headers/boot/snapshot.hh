@@ -12,13 +12,20 @@
 #ifndef SNAPSHOT_H
 #define SNAPSHOT_H
 
-#define SNAPSHOT_BLOCK_SIZE 4096
+#include <iostream>
+#include <sys/mman.h>
+#include <vector>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <chrono>
+#include <fcntl.h>
+#include <string>
 
 // Restore a block-mode snapshot
 bool snapshot_block_write();
 
 // Create a new block-mode snapshot
-bool snapshot_block_read();
+bool snapshot_block_read(std::string device);//, size_t block_size, unsigned long &bytes_read);
 
 // Restore a file-mode snapshot
 bool snapshot_file_write();
