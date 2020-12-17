@@ -10,11 +10,14 @@
 //                                                                            //
 //=========================================================S A N D P O L I S==//
 
+import java.nio.ByteBuffer
+
 import org.gradle.language.cpp.tasks.CppCompile
 import org.gradle.nativeplatform.tasks.LinkExecutable
 
 plugins {
 	id("sandpolis-module")
+	id("sandpolis-soi")
 	id("cpp-application")
 }
 
@@ -44,4 +47,27 @@ tasks.withType<CppCompile> {
 	dependsOn(":module:com.sandpolis.core.instance:generateProto")
 	dependsOn(":module:com.sandpolis.core.net:generateProto")
 	compilerArgs.set(listOf("-pthread", "-std=c++20"))
+}
+
+// Inject resources into the executable
+val injectResources by tasks.creating(DefaultTask::class) {
+	dependsOn(":com.sandpolis.agent.micro:assembleDebug")
+	dependsOn(":com.sandpolis.agent.micro:writeSoi")
+
+	doLast {
+		var resource_number = 1
+		val executable = project.file("build/exe/main/debug/com.sandpolis.agent.micro")
+
+		project.file("src/main/resources").walk().filter { it.isFile() }.forEach {
+
+			// Write the file followed by the file size, path, path size, and resource index
+			executable.appendBytes(it.readBytes())
+			executable.appendBytes(ByteBuffer.allocate(8).putLong(it.length()).array())
+			executable.appendText(it.getName())
+			executable.appendBytes(ByteBuffer.allocate(4).putInt(it.getName().length).array())
+			executable.appendBytes(ByteBuffer.allocate(4).putInt(resource_number).array())
+
+			resource_number++
+		}
+	}
 }
