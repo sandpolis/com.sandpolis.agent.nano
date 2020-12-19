@@ -10,41 +10,29 @@
 //                                                                            //
 //=========================================================S A N D P O L I S==//
 
-#include <string>
-#include <sys/mman.h>
+#ifndef S7S_EXEC_H
+#define S7S_EXEC_H
+
+#include <cstdio>
 #include <iostream>
-#include <fcntl.h>
+#include <memory>
+#include <stdexcept>
+#include <string>
+#include <array>
 
-template <typename T>
-T *resource_load(std::string path) {
-
-	char readlink[32];
-	sprintf(readlink, "readlink /proc/%d/exe", getpid());
-	if (system(readlink)) {
-		
+namespace s7s {
+	const std::string exec(const char* cmd) {
+		std::array<char, 128> buffer;
+		std::string result;
+		std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd, "r"), pclose);
+		if (!pipe) {
+			throw std::runtime_error("popen() failed!");
+		}
+		while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
+			result += buffer.data();
+		}
+		return result;
 	}
-
-	int fd = open("/home/cilki/img.six", O_RDONLY);
-	if (fd <= 0) {
-		std::cout << "Failed to open device" << std::endl;
-		return nullptr;
-	}
-
-	std::size_t file_size = 25682;
-	if (file_size <= 0) {
-		std::cout << "Failed to get resource size" << std::endl;
-		return nullptr;
-	}
-
-	void *file = mmap(nullptr, file_size, PROT_READ, MAP_PRIVATE, fd, 0);
-	if (file == nullptr) {
-		std::cout << "Failed to map resource" << std::endl;
-		return nullptr;
-	}
-
-	// Walk resources backwards
-	for (unsigned int i = file_size - 1;;) {
-		
-	}
-	return nullptr;
 }
+
+#endif

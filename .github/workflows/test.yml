@@ -12,7 +12,7 @@ jobs:
 
     - name: Build protobuf
       run: |
-        wget -q -O- https://github.com/protocolbuffers/protobuf/releases/download/v3.14.0/protobuf-cpp-3.14.0.tar.gz | tar xf -
+        wget -q -O- https://github.com/protocolbuffers/protobuf/releases/download/v3.14.0/protobuf-cpp-3.14.0.tar.gz | tar xzf -
         cd protobuf-*
         ./configure --disable-shared
         sudo make install
