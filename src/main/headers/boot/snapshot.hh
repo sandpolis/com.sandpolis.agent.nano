@@ -25,7 +25,7 @@
 bool snapshot_block_write();
 
 // Create a new block-mode snapshot
-bool snapshot_block_read(std::string device);//, size_t block_size, unsigned long &bytes_read);
+bool snapshot_block_read(std::string device); //, size_t block_size, unsigned long &bytes_read);
 
 // Restore a file-mode snapshot
 bool snapshot_file_write();

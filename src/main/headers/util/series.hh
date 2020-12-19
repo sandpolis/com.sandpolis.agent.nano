@@ -13,19 +13,19 @@
 #define SERIES_H
 
 namespace s7s {
-	template<typename T>
-	class TimeSeries {
+template<typename T>
+class TimeSeries {
 
-	public:
-		void insert(T point) {
-
-		}
-
-		int get_rate() {
-			
-		}
+public:
+	void insert(T point) {
 
 	}
+
+	int get_rate() {
+
+	}
+
+}
 }
 
 #endif

@@ -13,7 +13,7 @@
 #include "boot/snapshot.hh"
 #include "util/murmur.hh"
 
-bool snapshot_block_read(std::string device){//, size_t block_size, unsigned long &bytes_read) {
+bool snapshot_block_read(std::string device) { //, size_t block_size, unsigned long &bytes_read) {
 	int fd = open("", O_RDONLY);
 	if (fd <= 0) {
 		std::cout << "Failed to open device" << std::endl;
@@ -48,7 +48,8 @@ bool snapshot_block_read(std::string device){//, size_t block_size, unsigned lon
 	return true;
 }
 
-bool snapshot_block_write(char *device, size_t block_size, unsigned long &bytes_written) {
+bool snapshot_block_write(char *device, size_t block_size,
+		unsigned long &bytes_written) {
 	int fd = open(device, O_WRONLY);
 	if (fd <= 0) {
 		std::cout << "Failed to open device" << std::endl;

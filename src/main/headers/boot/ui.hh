@@ -44,16 +44,10 @@
 #define BLOCK_SYNCED L"▣"
 #define BLOCK_HASHED L"▢"
 
-
-
 void ui_main(size_t block_size, size_t device_size);
 
 enum BlockState {
-	unseen,
-	hashing,
-	syncing,
-	hashed,
-	synced
+	unseen, hashing, syncing, hashed, synced
 };
 
 class Block {
@@ -65,8 +59,9 @@ private:
 	const unsigned int i;
 
 public:
-	Block(WINDOW *_window, int _y, int _x, unsigned int _i)
-		: window(_window), y(_y), x(_x), i(_i), state(unseen) {}
+	Block(WINDOW *_window, int _y, int _x, unsigned int _i) : window(_window), y(
+			_y), x(_x), i(_i), state(unseen) {
+	}
 
 	void refresh() {
 

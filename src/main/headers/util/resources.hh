@@ -24,7 +24,7 @@
 
 namespace fs = std::filesystem;
 
-template <typename T>
+template<typename T>
 T resource_load(std::string path) {
 
 	char readlink[32];
@@ -35,10 +35,10 @@ T resource_load(std::string path) {
 	std::string exe = s7s::exec(readlink);
 
 	try {
-        exe_size = fs::file_size(exe);
-    } catch(fs::filesystem_error& e) {
-        return nullptr;
-    }
+		exe_size = fs::file_size(exe);
+	} catch (fs::filesystem_error &e) {
+		return nullptr;
+	}
 
 	int fd = open(exe.c_str(), O_RDONLY);
 	if (fd <= 0) {
@@ -53,12 +53,12 @@ T resource_load(std::string path) {
 
 	// Walk resources backwards
 	for (unsigned int i = file_size - 1;;) {
-		std::uint32_t i_index = *static_cast<std::uint32_t *>(d);
-		std::uint64_t i_file_size = *static_cast<std::uint64_t *>(d - 4);
-		std::uint64_t i_path_size = *static_cast<std::uint64_t *>(d - 12);
+		std::uint32_t i_index = *static_cast<std::uint32_t*>(d);
+		std::uint64_t i_file_size = *static_cast<std::uint64_t*>(d - 4);
+		std::uint64_t i_path_size = *static_cast<std::uint64_t*>(d - 12);
 
 		// Check path
-		std::string i_path(static_cast<char *>(d), i_path_size);
+		std::string i_path(static_cast<char*>(d), i_path_size);
 		if (path == i_path) {
 			// Found the requested resource
 			return T(d, i_file_size);
@@ -87,7 +87,7 @@ public:
 		free(data);
 	}
 
-	void *get_data() {
+	void* get_data() {
 		return data;
 	}
 };
@@ -103,8 +103,8 @@ public:
 
 		// Manage a pointer to the start of the current element and to the
 		// current character
-		char *d = static_cast<char *>(data);
-		char *e = static_cast<char *>(data);
+		char *d = static_cast<char*>(data);
+		char *e = static_cast<char*>(data);
 		for (int c = 0; c < length; c++) {
 			if (e[c] == '=') {
 				std::string key(d, c - (d - e));

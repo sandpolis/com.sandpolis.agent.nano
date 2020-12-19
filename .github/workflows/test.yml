@@ -16,6 +16,8 @@ jobs:
         cd protobuf-*
         ./configure --disable-shared
         sudo make install
+        cd ..
+        rm -rf protobuf-*
 
     - name: Install other dependencies
       run: |

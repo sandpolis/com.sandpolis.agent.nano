@@ -20,41 +20,44 @@
 #include "util/net.hh"
 #include "util/resources.hh"
 #include "util/uuid.hh"
+#include "boot/snapshot.hh"
 
-#include "com/sandpolis/core/instance/generator.pb.h"
+#include "boot/ui.hh"
+
 #include "com/sandpolis/core/foundation/soi/build.pb.h"
 
 int main(int argc, char **argv) {
-	core::foundation::soi::SO_Build so_build;
-	core::instance::MicroConfig config;
+
+	core::instance::AgentConfig config;
 
 	// Load build metadata from resource file
-	if (!so_build.ParseFromArray(resource_body(soi_build),
-			resource_length(soi_build))) {
-		std::cout << "Failed to read embedded metadata!" << std::endl;
-		return 1;
-	}
+	s7s::PropertiesResource soi_build = s7s::resource_load("build.properties");
 
 	// Load configuration from resource file
+	s7s::RawResource = s7s::resource_load("agent.config");
 	if (!config.ParseFromArray(resource_body(soi_agent),
 			resource_length(soi_agent))) {
 		std::cout << "Failed to read embedded configuration!" << std::endl;
 		return 1;
 	}
 
-	std::cout << "Launching Sandpolis Micro Agent (" << so_build.version()
-			<< ")" << std::endl;
+	std::cout << "Launching Sandpolis Micro Agent ("
+			<< so_build.get_property("instance.version") << ")" << std::endl;
 	std::cout << "Build Environment:" << std::endl;
-	std::cout << "   Platform: " << so_build.platform() << std::endl;
-	std::cout << "     Gradle: " << so_build.gradle_version() << std::endl;
-	std::cout << "       Java: " << so_build.java_version() << std::endl;
+	std::cout << "   Platform: " << so_build.get_property("build.platform")
+			<< std::endl;
+	std::cout << "     Gradle: "
+			<< so_build.get_property("build.gradle.version") << std::endl;
+	std::cout << "       Java: " << so_build.get_property("build.java.version")
+			<< std::endl;
 
 	// Load UUID
 	std::string uuid = generate_uuid();
 
 	// Begin connection routine
 	long iteration = 0;
-	const core::instance::LoopConfig &loop_config = config.network().loop_config();
+	const core::instance::LoopConfig &loop_config =
+			config.network().loop_config();
 	while (iteration < loop_config.iteration_limit()
 			|| loop_config.iteration_limit() == 0) {
 
