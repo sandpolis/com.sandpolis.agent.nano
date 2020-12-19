@@ -10,42 +10,41 @@
 //                                                                            //
 //=========================================================S A N D P O L I S==//
 
-// Take/restore disk snapshots
+#include <string>
+#include <sys/mman.h>
+#include <iostream>
+#include <fcntl.h>
 
-bool snapshot_block_read(char *device) {
-	int fd = open(device, O_RDONLY);
+template <typename T>
+T *resource_load(std::string path) {
+
+	char readlink[32];
+	sprintf(readlink, "readlink /proc/%d/exe", getpid());
+	if (system(readlink)) {
+		
+	}
+
+	int fd = open("/home/cilki/img.six", O_RDONLY);
 	if (fd <= 0) {
-		std::cout("Failed to open device");
-		return false;
+		std::cout << "Failed to open device" << std::endl;
+		return nullptr;
 	}
 
-	size_t device_size = 0;
-	if (device_size <= 0) {
-		std::cout("Failed to get device size");
-		return false;
+	std::size_t file_size = 25682;
+	if (file_size <= 0) {
+		std::cout << "Failed to get resource size" << std::endl;
+		return nullptr;
 	}
 
-	void *blocks = mmap(nullptr, device_size, PROT_READ, MAP_PRIVATE, fd, 0);
-	if (blocks == nullptr) {
-		std::cout("Failed to map device");
-		return false;
+	void *file = mmap(nullptr, file_size, PROT_READ, MAP_PRIVATE, fd, 0);
+	if (file == nullptr) {
+		std::cout << "Failed to map resource" << std::endl;
+		return nullptr;
 	}
 
-	void *block;
-	for(unsigned long i = 0; i < device_size; i += SNAPSHOT_BLOCK_SIZE) {
-		block = blocks + i;
-
-		// TODO: hash
-		// TODO: egress
+	// Walk resources backwards
+	for (unsigned int i = file_size - 1;;) {
+		
 	}
-}
-
-void snapshot_block_write(char *device) {
-	int fd = open(device, O_WRONLY);
-	if (fd <= 0) {
-		std::cout("Failed to open device");
-		return false;
-	}
-
-	mmap();
+	return nullptr;
 }

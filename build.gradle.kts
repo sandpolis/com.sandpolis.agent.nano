@@ -46,7 +46,7 @@ tasks.withType<CppCompile> {
 	dependsOn(":module:com.sandpolis.core.foundation:generateProto")
 	dependsOn(":module:com.sandpolis.core.instance:generateProto")
 	dependsOn(":module:com.sandpolis.core.net:generateProto")
-	compilerArgs.set(listOf("-pthread", "-std=c++20"))
+	compilerArgs.set(listOf("-pthread", "-std=c++2a"))
 }
 
 // Inject resources into the executable
