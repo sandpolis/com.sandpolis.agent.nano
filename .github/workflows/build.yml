@@ -18,8 +18,8 @@ jobs:
         cd ..
         sudo rm -rf protobuf-*
       env:
-        CC=gcc-10
-        CXX=g++-10
+        CC: gcc-10
+        CXX: g++-10
     - name: Install other dependencies
       run: |
         sudo apt-get install libncursesw5-dev
@@ -38,5 +38,5 @@ jobs:
       run: |
         gradle --no-daemon :com.sandpolis.agent.micro:build
       env:
-        CC=gcc-10
-        CXX=g++-10
+        CC: gcc-10
+        CXX: g++-10
