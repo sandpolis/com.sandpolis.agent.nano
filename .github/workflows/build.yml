@@ -5,11 +5,10 @@ on:
     branches: [ master ]
 
 jobs:
-  test:
-    name: "Test on ubuntu-latest"
+  build:
+    name: "Build on ubuntu-latest"
     runs-on: ubuntu-latest
     steps:
-
     - name: Build protobuf
       run: |
         wget -q -O- https://github.com/protocolbuffers/protobuf/releases/download/v3.14.0/protobuf-cpp-3.14.0.tar.gz | tar xzf -
@@ -17,26 +16,21 @@ jobs:
         ./configure --disable-shared
         sudo make install
         cd ..
-        rm -rf protobuf-*
-
+        sudo rm -rf protobuf-*
     - name: Install other dependencies
       run: |
         sudo apt-get install libncursesw5-dev
-
     - name: Initialize Java
       uses: actions/setup-java@v1
       with:
         java-version: 15
-
     - name: Checkout root repository
       uses: actions/checkout@v2
       with:
         repository: sandpolis/sandpolis
-
     - name: Checkout submodules
       run: |
         git submodule update --init --remote --merge com.sandpolis.agent.micro
-
     - name: Execute build
       run: |
-        ./gradlew :com.sandpolis.agent.micro:build
+        gradle --no-daemon :com.sandpolis.agent.micro:build
