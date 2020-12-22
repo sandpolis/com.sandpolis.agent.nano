@@ -76,7 +76,7 @@ bool Sock::CvidHandshake() {
 	rq_cvid.set_instance(core::instance::InstanceType::AGENT);
 	rq_cvid.set_instance_flavor(core::instance::InstanceFlavor::MICRO);
 	rq_cvid.set_uuid(uuid);
-	rq.mutable_payload()->PackFrom(rq_cvid);
+	//rq.mutable_payload()->PackFrom(rq_cvid);
 	if (!Send(rq)) {
 		return false;
 	}
@@ -85,9 +85,9 @@ bool Sock::CvidHandshake() {
 		return false;
 	}
 
-	if (!rs.payload().UnpackTo(&rs_cvid)) {
-		return false;
-	}
+	//if (!rs.payload().UnpackTo(&rs_cvid)) {
+	//	return false;
+	//}
 	remote_cvid = rs_cvid.server_cvid();
 	remote_uuid = rs_cvid.server_uuid();
 	cvid = rs_cvid.cvid();

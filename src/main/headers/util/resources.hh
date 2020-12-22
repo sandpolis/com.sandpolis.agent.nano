@@ -26,91 +26,91 @@ namespace fs = std::filesystem;
 
 namespace s7s {
 
-	// The longest valid resource path
-	#define MAX_PATH 64
+// The longest valid resource path
+#define MAX_PATH 64
 
-	struct Resource {
-		virtual bool load(void *data, std::size_t length) = 0;
-	};
+struct Resource {
+	virtual bool load(void *data, std::size_t length) = 0;
+};
 
-	// A resource without known structure
-	class RawResource : public Resource {
+// A resource without known structure
+class RawResource: public Resource {
 
-		// The resource data
-		void *_data;
+	// The resource data
+	void *_data;
 
-		// The data length in bytes
-		std::size_t _length;
+	// The data length in bytes
+	std::size_t _length;
 
-		bool loaded = false;
+	bool loaded = false;
 
-	public:
+public:
 
-		bool load(void *data, std::size_t length) {
-			if (loaded) {
-				return false;
-			}
-			_length = length;
-			_data = malloc(length);
-			if (_data == nullptr) {
-				return false;
-			}
-			loaded = true;
-			memcpy(_data, data, length);
-			return true;
+	bool load(void *data, std::size_t length) {
+		if (loaded) {
+			return false;
 		}
-
-		~RawResource() {
-			if (loaded) {
-				free(_data);
-			}
+		_length = length;
+		_data = malloc(length);
+		if (_data == nullptr) {
+			return false;
 		}
+		loaded = true;
+		memcpy(_data, data, length);
+		return true;
+	}
 
-		void* data() {
-			return _data;
+	~RawResource() {
+		if (loaded) {
+			free(_data);
 		}
+	}
 
-		std::size_t length() {
-			return _length;
-		}
-	};
+	void* data() {
+		return _data;
+	}
 
-	// A resource containing a Java properties file
-	class PropertiesResource : public Resource {
+	std::size_t length() {
+		return _length;
+	}
+};
 
-		std::map<std::string, std::string> properties;
+// A resource containing a Java properties file
+class PropertiesResource: public Resource {
 
-	public:
+	std::map<std::string, std::string> properties;
 
-		bool load(void *data, std::size_t length) {
+public:
 
-			// Manage a pointer to the start of the current element and to the
-			// current character
-			char *d = static_cast<char*>(data);
-			char *e = static_cast<char*>(data);
-			for (int c = 0; c < length; c++) {
-				if (e[c] == '=') {
-					std::string key(d, c - (d - e));
-					d = e + c + 1;
-					for (; c < length; c++) {
-						if (e[c] == '\n') {
-							std::string value(d, c - (d - e));
-							d = e + c + 1;
-							properties.insert(std::make_pair(key, value));
-						}
+	bool load(void *data, std::size_t length) {
+
+		// Manage a pointer to the start of the current element and to the
+		// current character
+		char *d = static_cast<char*>(data);
+		char *e = static_cast<char*>(data);
+		for (int c = 0; c < length; c++) {
+			if (e[c] == '=') {
+				std::string key(d, c - (d - e));
+				d = e + c + 1;
+				for (; c < length; c++) {
+					if (e[c] == '\n') {
+						std::string value(d, c - (d - e));
+						d = e + c + 1;
+						properties.insert(std::make_pair(key, value));
 					}
 				}
 			}
-
-			return true;
 		}
 
-		std::string get_property(std::string name) {
-			return properties[name];
-		}
-	};
+		return true;
+	}
 
-	bool resource_load(std::string path, Resource& output);
+	std::string get_property(std::string name) {
+		return properties[name];
+	}
+};
+
+bool resource_load(std::string path, Resource &output);
 
 }
 #endif

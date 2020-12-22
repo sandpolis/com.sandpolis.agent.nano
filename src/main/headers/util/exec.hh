@@ -16,7 +16,7 @@
 #include <string>
 
 namespace s7s {
-	const std::string exec(const char *cmd);
+const std::string exec(const char *cmd);
 }
 
 #endif

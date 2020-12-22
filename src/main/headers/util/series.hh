@@ -20,49 +20,51 @@
 
 namespace s7s {
 
-	// TimeSeries tracks statistics on a finite sequence of data points.
-	template<typename T, int C>
-	class TimeSeries {
+// TimeSeries tracks statistics on a finite sequence of data points.
+template<typename T, int C>
+class TimeSeries {
 
-		// A circular buffer containing the data points
-		std::array<std::pair<std::uint64_t, T>, C> buffer;
+	// A circular buffer containing the data points
+	std::array<std::pair<std::uint64_t, T>, C> buffer;
 
-		// The start index
-		std::size_t start = 0;
+	// The start index
+	std::size_t start = 0;
 
-		// The size of the buffer
-		std::size_t size = 0;
+	// The size of the buffer
+	std::size_t size = 0;
 
-	public:
+public:
 
-		// Add a new data point at the current instant. An old point may be
-		// overwritten, depending on how full the series is.
-		void append(T datapoint) {
-			const auto now = std::chrono::system_clock::now();
+	// Add a new data point at the current instant. An old point may be
+	// overwritten, depending on how full the series is.
+	void append(T datapoint) {
+		const auto now = std::chrono::system_clock::now();
 
-			buffer[start + size] = std::make_pair(std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()), datapoint);
-			if (size == C) {
-				start = (start + 1) % C;
-			}
-			size++;
+		buffer[start + size] = std::make_pair(
+				std::chrono::duration_cast < std::chrono::milliseconds
+						> (now.time_since_epoch()), datapoint);
+		if (size == C) {
+			start = (start + 1) % C;
+		}
+		size++;
+	}
+
+	// Compute the rate between the last two data points.
+	T get_last_rate() {
+		if (size < 2) {
+			// No data
 		}
 
-		// Compute the rate between the last two data points.
-		T get_last_rate() {
-			if (size < 2) {
-				// No data
-			}
+		std::pair<std::uint64_t, T> last1 = buffer[start + size - 1];
+		std::pair<std::uint64_t, T> last2 = buffer[start + size - 2];
 
-			std::pair<std::uint64_t, T> last1 = buffer[start + size - 1];
-			std::pair<std::uint64_t, T> last2 = buffer[start + size - 2];
+		T value_change = last1.second - last2.second;
+		std::uint64_t time_changed = last1.first - last2.first;
 
-			T value_change = last1.second - last2.second;
-			std::uint64_t time_changed = last1.first - last2.first;
+		return value_change / time_changed;
+	}
 
-			return value_change / time_changed;
-		}
-
-	};
+};
 }
 
 #endif

@@ -27,5 +27,12 @@ const std::string s7s::exec(const char *cmd) {
 	while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
 		result += buffer.data();
 	}
+
+	// Trim whitespace
+	result.erase(
+			std::find_if(result.rbegin(), result.rend(), [](unsigned char ch) {
+				return !std::isspace(ch);
+			}).base(), result.end());
+
 	return result;
 }

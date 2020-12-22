@@ -10,9 +10,10 @@
 //                                                                            //
 //=========================================================S A N D P O L I S==//
 
-#include "boot/ui.hh"
-#include "util/text.hh"
 #include "boot/snapshot.hh"
+#include "boot/ui.hh"
+#include "util/resources.hh"
+#include "util/text.hh"
 #include <iostream>
 #include <locale.h>
 #include <sys/mman.h>
@@ -59,13 +60,16 @@ bool init_header() {
 	}
 
 	// Load sixel image
-	s7s::RawResource resource = s7s::get_resource("sandpolis.sixel");
+	s7s::RawResource resource;
+	if (!s7s::resource_load("sandpolis.sixel", resource)) {
+		return false;
+	}
 
 	wmove(win_header, 0, 0);
 	wrefresh(win_header);
 
 	// Write image
-	puts((static_cast<char*>(resource.get_data())));
+	puts((static_cast<char*>(resource.data())));
 	wmove(win_header, 0, 0);
 
 	return true;
