@@ -10,13 +10,22 @@
 //                                                                            //
 //=========================================================S A N D P O L I S==//
 
-#ifndef S7S_EXEC_H
-#define S7S_EXEC_H
+#include "util/exec.hh"
+#include <array>
+#include <cstdio>
+#include <iostream>
+#include <memory>
+#include <stdexcept>
 
-#include <string>
-
-namespace s7s {
-	const std::string exec(const char *cmd);
+const std::string s7s::exec(const char *cmd) {
+	std::array<char, 128> buffer;
+	std::string result;
+	std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(cmd, "r"), pclose);
+	if (!pipe) {
+		throw std::runtime_error("popen() failed!");
+	}
+	while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr) {
+		result += buffer.data();
+	}
+	return result;
 }
-
-#endif

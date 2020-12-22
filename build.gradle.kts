@@ -11,6 +11,7 @@
 //=========================================================S A N D P O L I S==//
 
 import java.nio.ByteBuffer
+import java.nio.ByteOrder
 
 import org.gradle.language.cpp.tasks.CppCompile
 import org.gradle.nativeplatform.tasks.LinkExecutable
@@ -55,19 +56,18 @@ val injectResources by tasks.creating(DefaultTask::class) {
 	dependsOn(":com.sandpolis.agent.micro:writeSoi")
 
 	doLast {
-		var resource_number = 1
 		val executable = project.file("build/exe/main/debug/com.sandpolis.agent.micro")
+
+		// Add resource section header (all zeros)
+		executable.appendBytes(ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(0).array())
 
 		project.file("src/main/resources").walk().filter { it.isFile() }.forEach {
 
-			// Write the file followed by the file size, path, path size, and resource index
+			// Write the file followed by the file size, path, and path size
 			executable.appendBytes(it.readBytes())
-			executable.appendBytes(ByteBuffer.allocate(8).putLong(it.length()).array())
+			executable.appendBytes(ByteBuffer.allocate(8).order(ByteOrder.LITTLE_ENDIAN).putLong(it.length()).array())
 			executable.appendText(it.getName())
-			executable.appendBytes(ByteBuffer.allocate(4).putInt(it.getName().length).array())
-			executable.appendBytes(ByteBuffer.allocate(4).putInt(resource_number).array())
-
-			resource_number++
+			executable.appendBytes(ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(it.getName().length).array())
 		}
 	}
 }

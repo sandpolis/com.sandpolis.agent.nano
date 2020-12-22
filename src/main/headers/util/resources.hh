@@ -24,105 +24,93 @@
 
 namespace fs = std::filesystem;
 
-template<typename T>
-T resource_load(std::string path) {
+namespace s7s {
 
-	char readlink[32];
-	std::uintmax_t exe_size;
+	// The longest valid resource path
+	#define MAX_PATH 64
 
-	// Determine executable path
-	sprintf(readlink, "readlink /proc/%d/exe", getpid());
-	std::string exe = s7s::exec(readlink);
+	struct Resource {
+		virtual bool load(void *data, std::size_t length) = 0;
+	};
 
-	try {
-		exe_size = fs::file_size(exe);
-	} catch (fs::filesystem_error &e) {
-		return nullptr;
-	}
+	// A resource without known structure
+	class RawResource : public Resource {
 
-	int fd = open(exe.c_str(), O_RDONLY);
-	if (fd <= 0) {
-		return nullptr;
-	}
+		// The resource data
+		void *_data;
 
-	// Map the executable
-	void *data = mmap(nullptr, exe_size, PROT_READ, MAP_PRIVATE, fd, 0);
-	if (data == nullptr) {
-		return nullptr;
-	}
+		// The data length in bytes
+		std::size_t _length;
 
-	// Walk resources backwards
-	for (unsigned int i = file_size - 1;;) {
-		std::uint32_t i_index = *static_cast<std::uint32_t*>(d);
-		std::uint64_t i_file_size = *static_cast<std::uint64_t*>(d - 4);
-		std::uint64_t i_path_size = *static_cast<std::uint64_t*>(d - 12);
+		bool loaded = false;
 
-		// Check path
-		std::string i_path(static_cast<char*>(d), i_path_size);
-		if (path == i_path) {
-			// Found the requested resource
-			return T(d, i_file_size);
+	public:
+
+		bool load(void *data, std::size_t length) {
+			if (loaded) {
+				return false;
+			}
+			_length = length;
+			_data = malloc(length);
+			if (_data == nullptr) {
+				return false;
+			}
+			loaded = true;
+			memcpy(_data, data, length);
+			return true;
 		}
-	}
-	return nullptr;
-}
 
-// A resource without known structure
-class RawResource {
+		~RawResource() {
+			if (loaded) {
+				free(_data);
+			}
+		}
 
-	// The read-only data
-	void *data;
+		void* data() {
+			return _data;
+		}
 
-public:
+		std::size_t length() {
+			return _length;
+		}
+	};
 
-	// The data length in bytes
-	const std::size_t length;
+	// A resource containing a Java properties file
+	class PropertiesResource : public Resource {
 
-	RawResource(void *_data, std::size_t _length) : length(_length) {
-		data = malloc(_length);
-		memcpy(data, _data, _length);
-	}
+		std::map<std::string, std::string> properties;
 
-	~RawResource() {
-		free(data);
-	}
+	public:
 
-	void* get_data() {
-		return data;
-	}
-};
+		bool load(void *data, std::size_t length) {
 
-// A resource backed by 
-class PropertiesResource {
-
-	std::map<std::string, std::string> properties;
-
-public:
-
-	PropertiesResource(void *data, std::size_t length) {
-
-		// Manage a pointer to the start of the current element and to the
-		// current character
-		char *d = static_cast<char*>(data);
-		char *e = static_cast<char*>(data);
-		for (int c = 0; c < length; c++) {
-			if (e[c] == '=') {
-				std::string key(d, c - (d - e));
-				d = e + c + 1;
-				for (; c < length; c++) {
-					if (e[c] == '\n') {
-						std::string value(d, c - (d - e));
-						d = e + c + 1;
-						properties.insert(std::make_pair(key, value));
+			// Manage a pointer to the start of the current element and to the
+			// current character
+			char *d = static_cast<char*>(data);
+			char *e = static_cast<char*>(data);
+			for (int c = 0; c < length; c++) {
+				if (e[c] == '=') {
+					std::string key(d, c - (d - e));
+					d = e + c + 1;
+					for (; c < length; c++) {
+						if (e[c] == '\n') {
+							std::string value(d, c - (d - e));
+							d = e + c + 1;
+							properties.insert(std::make_pair(key, value));
+						}
 					}
 				}
 			}
+
+			return true;
 		}
-	}
 
-	std::string get_property(std::string name) {
-		return properties[name];
-	}
-};
+		std::string get_property(std::string name) {
+			return properties[name];
+		}
+	};
 
+	bool resource_load(std::string path, Resource& output);
+
+}
 #endif
