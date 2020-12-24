@@ -9,6 +9,12 @@ jobs:
     name: "Build on ubuntu-latest"
     runs-on: ubuntu-latest
     steps:
+    - name: Set compiler version
+      run: |
+        sudo ln -sf /usr/bin/g++-10 /usr/local/sbin/g++
+        sudo ln -sf /usr/bin/gcc-10 /usr/local/sbin/gcc
+        g++ --version
+        gcc --version
     - name: Build protobuf
       run: |
         wget -q -O- https://github.com/protocolbuffers/protobuf/releases/download/v3.14.0/protobuf-cpp-3.14.0.tar.gz | tar xzf -
@@ -17,9 +23,6 @@ jobs:
         sudo make install
         cd ..
         sudo rm -rf protobuf-*
-      env:
-        CC: gcc-10
-        CXX: g++-10
     - name: Install other dependencies
       run: |
         sudo apt-get install libncursesw5-dev
@@ -37,6 +40,3 @@ jobs:
     - name: Execute build
       run: |
         gradle --no-daemon :com.sandpolis.agent.micro:build
-      env:
-        CC: gcc-10
-        CXX: g++-10
