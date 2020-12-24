@@ -1,17 +1,12 @@
 //============================================================================//
 //                                                                            //
-//                Copyright © 2015 - 2020 Subterranean Security               //
+//                         Copyright © 2015 Sandpolis                         //
 //                                                                            //
 //  This source file is subject to the terms of the Mozilla Public License    //
 //  version 2. You may not use this file except in compliance with the MPL    //
-//  as published by the Mozilla Foundation at:                                //
+//  as published by the Mozilla Foundation.                                   //
 //                                                                            //
-//    https://mozilla.org/MPL/2.0                                             //
-//                                                                            //
-//=========================================================S A N D P O L I S==//
-
-// MurmurHash3 implementation taken from https://github.com/aappleby/smhasher
-
+//============================================================================//
 #ifndef MURMUR_H
 #define MURMUR_H
 
@@ -28,7 +23,7 @@ inline uint64_t rotl64(uint64_t x, int8_t r) {
 //-----------------------------------------------------------------------------
 // Finalization mix - force all bits of a hash block to avalanche
 
-inline __attribute__((always_inline)) uint64_t fmix64(uint64_t k) {
+inline uint64_t fmix64(uint64_t k) {
 	k ^= k >> 33;
 	k *= BIG_CONSTANT(0xff51afd7ed558ccd);
 	k ^= k >> 33;
