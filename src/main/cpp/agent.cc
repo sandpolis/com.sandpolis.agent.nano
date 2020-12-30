@@ -22,8 +22,6 @@
 
 #include "boot/ui.hh"
 
-#include "com/sandpolis/core/foundation/soi/build.pb.h"
-
 int main(int argc, char **argv) {
 	ui_main(16, 50000);
 
