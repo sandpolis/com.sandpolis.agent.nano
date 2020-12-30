@@ -7,11 +7,5 @@
 //  as published by the Mozilla Foundation.                                   //
 //                                                                            //
 //============================================================================//
-
-plugins {
-	id("java-library")
-	id("sandpolis-module")
-	id("sandpolis-java")
-	id("sandpolis-soi")
-	id("sandpolis-publish")
+module com.sandpolis.agent.micro {
 }

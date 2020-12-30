@@ -7,8 +7,15 @@
 //  as published by the Mozilla Foundation.                                   //
 //                                                                            //
 //============================================================================//
-#include "boot/snapshot.hh"
+#include "snapshot.hh"
 #include "util/murmur.hh"
+#include <chrono>
+#include <fcntl.h>
+#include <iostream>
+#include <sys/mman.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <vector>
 
 bool snapshot_block_read(std::string device) { //, size_t block_size, unsigned long &bytes_read) {
 	int fd = open("", O_RDONLY);

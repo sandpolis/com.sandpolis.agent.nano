@@ -6,18 +6,27 @@ on:
 
 jobs:
   build:
-    name: "Build on ubuntu-latest"
-    runs-on: ubuntu-latest
+    name: "Build on ${{ matrix.os }}"
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, macos-latest, windows-latest ]
     steps:
     - name: Set compiler version
+      if: matrix.os == 'ubuntu-latest'
       run: |
         sudo ln -sf /usr/bin/g++-10 /usr/local/sbin/g++
         sudo ln -sf /usr/bin/gcc-10 /usr/local/sbin/gcc
         g++ --version
         gcc --version
-    - name: Install dependencies
+    - name: Install dependencies (Linux)
+      if: matrix.os == 'ubuntu-latest'
       run: |
         sudo apt-get install libncursesw5-dev libprotobuf-dev
+    - name: Install dependencies (macOS)
+      if: matrix.os == 'macos-latest'
+      run: |
+        sudo brew install protobuf
     - name: Initialize Java
       uses: actions/setup-java@v1
       with:
@@ -29,11 +38,15 @@ jobs:
     - name: Checkout submodules
       run: |
         git submodule update --init --remote --merge com.sandpolis.agent.micro
-    - name: Execute build
+    - name: Build agent
       run: |
-        gradle --no-daemon :com.sandpolis.agent.micro:assembleRelease
+        gradle --no-daemon :com.sandpolis.agent.micro:agent:assembleRelease
+    - name: Build boot agent
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+        gradle --no-daemon :com.sandpolis.agent.micro:boot:assembleRelease
     - name: Save artifact
       uses: actions/upload-artifact@v2
       with:
-        name: linux-x86_64
-        path: com.sandpolis.agent.micro/build/exe/main/release/stripped/com.sandpolis.agent.micro
+        name: {{ matrix.os }}-x86_64
+        path: com.sandpolis.agent.micro/agent/build/exe/main/release/stripped/agent

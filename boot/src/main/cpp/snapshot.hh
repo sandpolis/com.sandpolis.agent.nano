@@ -10,13 +10,6 @@
 #ifndef SNAPSHOT_H
 #define SNAPSHOT_H
 
-#include <iostream>
-#include <sys/mman.h>
-#include <vector>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <chrono>
-#include <fcntl.h>
 #include <string>
 
 // Restore a block-mode snapshot

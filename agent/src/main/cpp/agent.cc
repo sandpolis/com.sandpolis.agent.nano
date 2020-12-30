@@ -18,12 +18,8 @@
 #include "util/net.hh"
 #include "util/resources.hh"
 #include "util/uuid.hh"
-#include "boot/snapshot.hh"
-
-#include "boot/ui.hh"
 
 int main(int argc, char **argv) {
-	ui_main(16, 50000);
 
 	//core::instance::AgentConfig config;
 
