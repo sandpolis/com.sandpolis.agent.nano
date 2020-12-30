@@ -37,7 +37,7 @@ application {
 
 tasks.withType<LinkExecutable> {
 	lib(file("/usr/lib/x86_64-linux-gnu/libncursesw.a"))
-	lib(file("/usr/local/lib/libprotobuf-lite.a"))
+	lib(file("/usr/lib/x86_64-linux-gnu/libprotobuf-lite.a"))
 	linkerArgs.set(listOf("-ldl", "-ltinfo", "-lpthread"))
 }
 
