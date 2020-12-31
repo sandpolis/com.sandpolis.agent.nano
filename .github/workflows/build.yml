@@ -48,5 +48,5 @@ jobs:
     - name: Save artifact
       uses: actions/upload-artifact@v2
       with:
-        name: {{ matrix.os }}-x86_64
+        name: ${{ matrix.os }}-x86_64
         path: com.sandpolis.agent.micro/agent/build/exe/main/release/stripped/agent
