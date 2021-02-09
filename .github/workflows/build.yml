@@ -34,10 +34,8 @@ jobs:
     - name: Checkout root repository
       uses: actions/checkout@v2
       with:
-        repository: sandpolis/sandpolis
-    - name: Checkout submodules
-      run: |
-        git submodule update --init --remote --merge com.sandpolis.agent.micro
+        repository: sandpolis/com.sandpolis.agent.micro
+        submodules: recursive
     - name: Build agent
       run: |
         gradle --no-daemon :com.sandpolis.agent.micro:agent:assembleRelease
