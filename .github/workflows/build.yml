@@ -19,14 +19,14 @@ jobs:
         sudo ln -sf /usr/bin/gcc-10 /usr/local/sbin/gcc
         g++ --version
         gcc --version
-    - name: Install dependencies (Linux)
+    - name: Install dependencies (ubuntu-latest)
       if: matrix.os == 'ubuntu-latest'
       run: |
         sudo apt-get install libncursesw5-dev libprotobuf-dev
-    - name: Install dependencies (macOS)
+    - name: Install dependencies (macos-latest)
       if: matrix.os == 'macos-latest'
       run: |
-        sudo brew install protobuf
+        brew install protobuf
     - name: Initialize Java
       uses: actions/setup-java@v1
       with:
