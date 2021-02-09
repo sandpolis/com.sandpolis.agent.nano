@@ -38,11 +38,11 @@ jobs:
         submodules: recursive
     - name: Build agent
       run: |
-        gradle --no-daemon :com.sandpolis.agent.micro:agent:assembleRelease
+        gradle --no-daemon :agent:assembleRelease
     - name: Build boot agent
       if: matrix.os == 'ubuntu-latest'
       run: |
-        gradle --no-daemon :com.sandpolis.agent.micro:boot:assembleRelease
+        gradle --no-daemon :boot:assembleRelease
     - name: Save artifact
       uses: actions/upload-artifact@v2
       with:
