@@ -1,12 +1,3 @@
 [submodule "buildSrc"]
 	path = buildSrc
 	url = ../com.sandpolis.build
-[submodule "module/com.sandpolis.core.foundation"]
-	path = module/com.sandpolis.core.foundation
-	url = ../com.sandpolis.core.foundation
-[submodule "module/com.sandpolis.core.instance"]
-	path = module/com.sandpolis.core.instance
-	url = ../com.sandpolis.core.instance
-[submodule "module/com.sandpolis.core.net"]
-	path = module/com.sandpolis.core.net
-	url = ../com.sandpolis.core.net
