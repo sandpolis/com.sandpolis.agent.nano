@@ -72,7 +72,7 @@ bool Sock::CvidHandshake() {
 	core::net::msg::RS_Cvid rs_cvid;
 
 	rq_cvid.set_instance(core::instance::InstanceType::AGENT);
-	rq_cvid.set_instance_flavor(core::instance::InstanceFlavor::MICRO);
+	rq_cvid.set_instance_flavor(core::instance::InstanceFlavor::NANO);
 	rq_cvid.set_uuid(uuid);
 	//rq.mutable_payload()->PackFrom(rq_cvid);
 	if (!Send(rq)) {

@@ -40,7 +40,7 @@ int main(int argc, char **argv) {
 	return 1;
 	}*/
 
-	std::cout << "Launching Sandpolis Micro Agent ("
+	std::cout << "Launching Sandpolis Nano Agent ("
 			<< so_build_resource.get_property("instance.version") << ")"
 			<< std::endl;
 	std::cout << "Build Environment:" << std::endl;

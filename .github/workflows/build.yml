@@ -22,7 +22,7 @@ jobs:
     - name: Install dependencies (ubuntu-latest)
       if: matrix.os == 'ubuntu-latest'
       run: |
-        sudo apt-get install libncursesw5-dev libprotobuf-dev
+        sudo apt-get install libprotobuf-dev
     - name: Install dependencies (macos-latest)
       if: matrix.os == 'macos-latest'
       run: |
@@ -31,20 +31,15 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 16
-    - name: Checkout root repository
+    - name: Checkout repository
       uses: actions/checkout@v2
       with:
-        repository: sandpolis/com.sandpolis.agent.micro
         submodules: recursive
     - name: Build agent
       run: |
-        gradle --no-daemon :agent:assembleRelease
-    - name: Build boot agent
-      if: matrix.os == 'ubuntu-latest'
-      run: |
-        gradle --no-daemon :boot:assembleRelease
+        gradle --no-daemon assembleRelease
     - name: Save artifact
       uses: actions/upload-artifact@v2
       with:
         name: ${{ matrix.os }}-x86_64
-        path: com.sandpolis.agent.micro/agent/build/exe/main/release/stripped/agent
+        path: com.sandpolis.agent.nano/build/exe/main/release/stripped/com.sandpolis.agent.nano

@@ -49,11 +49,11 @@ tasks.withType<CppCompile> {
 
 // Inject resources into the executable
 val injectResources by tasks.creating(DefaultTask::class) {
-	dependsOn(":com.sandpolis.agent.micro:assembleDebug")
-	dependsOn(":com.sandpolis.agent.micro:writeSoi")
+	dependsOn(":com.sandpolis.agent.nano:assembleDebug")
+	dependsOn(":com.sandpolis.agent.nano:writeSoi")
 
 	doLast {
-		val executable = project.file("build/exe/main/debug/com.sandpolis.agent.micro")
+		val executable = project.file("build/exe/main/debug/com.sandpolis.agent.nano")
 
 		// Add resource section header (all zeros)
 		executable.appendBytes(ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(0).array())

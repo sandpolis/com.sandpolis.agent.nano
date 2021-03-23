@@ -8,14 +8,4 @@
 //                                                                            //
 //============================================================================//
 
-rootProject.name = "com.sandpolis.agent.micro"
-
-// Core modules
-include("module:com.sandpolis.core.foundation")
-include("module:com.sandpolis.core.instance")
-include("module:com.sandpolis.core.net")
-
-include("agent")
-if (org.gradle.nativeplatform.platform.internal.DefaultNativePlatform.getCurrentOperatingSystem().isLinux()) {
-	include("boot")
-}
+rootProject.name = "com.sandpolis.agent.nano"

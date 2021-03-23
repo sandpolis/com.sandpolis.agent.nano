@@ -7,5 +7,5 @@
 //  as published by the Mozilla Foundation.                                   //
 //                                                                            //
 //============================================================================//
-module com.sandpolis.agent.micro {
+module com.sandpolis.agent.nano {
 }
