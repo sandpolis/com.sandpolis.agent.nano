@@ -7,7 +7,42 @@
 //  as published by the Mozilla Foundation.                                   //
 //                                                                            //
 //============================================================================//
-#include "sock.hh"
+#include "util/net.hh"
+
+int s7s::net::OpenConnection(const std::string _hostname, const int _port) {
+	const char *hostname = _hostname.c_str();
+	char port[32];
+	sprintf(port, "%d", _port);
+
+	struct addrinfo hints = { 0 }, *addrs;
+	hints.ai_family = AF_UNSPEC;
+	hints.ai_socktype = SOCK_STREAM;
+	hints.ai_protocol = IPPROTO_TCP;
+
+	const int status = getaddrinfo(hostname, port, &hints, &addrs);
+	if (status != 0) {
+		fprintf(stderr, "%s: %s\n", hostname, gai_strerror(status));
+	}
+
+	int sfd;
+	for (struct addrinfo *addr = addrs; addr != nullptr; addr = addr->ai_next) {
+		sfd = socket(addrs->ai_family, addrs->ai_socktype, addrs->ai_protocol);
+		if (sfd == -1) {
+			continue;
+		}
+
+		if (connect(sfd, addr->ai_addr, addr->ai_addrlen) == 0) {
+			// Connection success
+			break;
+		}
+
+		close(sfd);
+		sfd = -1;
+	}
+
+	freeaddrinfo(addrs);
+	return sfd;
+}
 
 void Sock::WriteVarint32(char *buffer, int value) {
 	for (int i = 0; i < MAX_VARINT_WIDTH; ++i) {

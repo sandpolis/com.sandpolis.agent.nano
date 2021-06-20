@@ -50,31 +50,18 @@ int main(int argc, char **argv) {
 
 	// Begin connection routine
 	long iteration = 0;
-	/*const core::instance::LoopConfig &loop_config =
-	config.network().loop_config();
-	while (iteration < loop_config.iteration_limit()
-	|| loop_config.iteration_limit() == 0) {
 
-	for (int i = 0; i < loop_config.target_size(); ++i) {
-	std::cout << "Attempting connection: "
-	<< loop_config.target(i).address() << std::endl;
-	int sfd = OpenConnection(loop_config.target(i).address(),
-	loop_config.target(i).port());
-	if (sfd > 0) {
-	Sock sock(uuid, sfd);
+	for (;; iteration++) {
 
-	if (sock.CvidHandshake()) {
-	// TODO enter sock event loop
-	return 0;
+		s7s::net::Sock sock(uuid, server_address, server_port);
+
+		if (sock.Connect()) {
+			if (sock.CvidHandshake()) {
+				// TODO enter sock event loop
+				return 0;
+			}
+		}
+		std::this_thread::sleep_for(
+		std::chrono::milliseconds(loop_config.cooldown()));
 	}
-
-	iteration = 0;
-	break;
-	}
-
-	iteration++;
-	std::this_thread::sleep_for(
-	std::chrono::milliseconds(loop_config.cooldown()));
-	}
-	}*/
 }

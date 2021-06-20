@@ -7,19 +7,17 @@
 //  as published by the Mozilla Foundation.                                   //
 //                                                                            //
 //============================================================================//
-#ifndef NET_H
-#define NET_H
+#include <climits>
+#include "util/text.hh"
 
-#include <errno.h>
-#include <netdb.h>
-#include <resolv.h>
-#include <string>
-#include <unistd.h>
-//#include <openssl/ssl.h>
-//#include <openssl/err.h>
-
-// Connect a socket to the remote host and return the file descriptor or -1 to
-// indicate failure.
-int OpenConnection(const std::string hostname, const int port);
-
-#endif
+std::string s7s::text::formatByteCount(unsigned long long b) {
+	return "";
+	/*return b < 1024ull ? std::format("{:f} B", b)
+	: b <= 0xfffccccccccccccull >> 40 ? std::format("{:1f} KiB", b / 0x1p10)
+	: b <= 0xfffccccccccccccull >> 30 ? std::format("{:1f} MiB", b / 0x1p20)
+	: b <= 0xfffccccccccccccull >> 20 ? std::format("{:1f} GiB", b / 0x1p30)
+	: b <= 0xfffccccccccccccull >> 10 ? std::format("{:1f} TiB", b / 0x1p40)
+	: b <= 0xfffccccccccccccull
+	? std::format("{:1f} PiB", (b >> 10) / 0x1p40)
+	: std::format("{:1f} EiB", (b >> 20) / 0x1p40);*/
+}
