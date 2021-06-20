@@ -23,28 +23,18 @@ plugins {
 application {
 	privateHeaders {
 		from(project.file("src/main/cpp"))
-		from(project(":module:com.sandpolis.core.foundation").file("gen/main/cpp"))
-		from(project(":module:com.sandpolis.core.instance").file("gen/main/cpp"))
-		from(project(":module:com.sandpolis.core.net").file("gen/main/cpp"))
 	}
 	source {
 		from(project.file("src/main/cpp"))
-		from(project(":module:com.sandpolis.core.foundation").file("gen/main/cpp"))
-		from(project(":module:com.sandpolis.core.instance").file("gen/main/cpp"))
-		from(project(":module:com.sandpolis.core.net").file("gen/main/cpp"))
 	}
 }
 
 tasks.withType<LinkExecutable> {
-	lib(file("/usr/lib/x86_64-linux-gnu/libprotobuf-lite.a"))
-	linkerArgs.set(listOf("-ldl", "-ltinfo", "-lpthread"))
+	//linkerArgs.set(listOf("-lpthread"))
 }
 
 tasks.withType<CppCompile> {
-	dependsOn(":module:com.sandpolis.core.foundation:generateProto")
-	dependsOn(":module:com.sandpolis.core.instance:generateProto")
-	dependsOn(":module:com.sandpolis.core.net:generateProto")
-	compilerArgs.set(listOf("-pthread", "-std=c++2a"))
+	compilerArgs.set(listOf("-std=c++17"))
 }
 
 // Inject resources into the executable

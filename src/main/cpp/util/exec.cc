@@ -13,6 +13,7 @@
 #include <iostream>
 #include <memory>
 #include <stdexcept>
+#include <algorithm>
 
 const std::string s7s::exec(const char *cmd) {
 	std::array<char, 128> buffer;

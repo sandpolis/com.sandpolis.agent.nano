@@ -21,40 +21,32 @@
 
 int main(int argc, char **argv) {
 
-	//core::instance::AgentConfig config;
-
-	// Load build metadata from resource file
+	// Load build metadata from embedded resource file
 	s7s::PropertiesResource so_build_resource;
 	if (!s7s::resource_load("build.properties", so_build_resource)) {
+		std::cerr << "Failed to parse build.properties" << std::endl;
 		return 1;
 	}
 
 	// Load configuration from resource file
-	s7s::RawResource so_config_resource;
-	if (!s7s::resource_load("agent.config", so_config_resource)) {
+	s7s::PropertiesResource so_config_resource;
+	if (!s7s::resource_load("agent.properties", so_config_resource)) {
+		std::cerr << "Failed to parse agent.properties" << std::endl;
 		return 1;
 	}
-	/*if (!config.ParseFromArray(so_config_resource.data(),
-	so_config_resource.length())) {
-	std::cout << "Failed to read embedded configuration!" << std::endl;
-	return 1;
-	}*/
 
 	std::cout << "Launching Sandpolis Nano Agent ("
 			<< so_build_resource.get_property("instance.version") << ")"
 			<< std::endl;
-	std::cout << "Build Environment:" << std::endl;
-	std::cout << "   Platform: "
-			<< so_build_resource.get_property("build.platform") << std::endl;
-	std::cout << "     Gradle: "
-			<< so_build_resource.get_property("build.gradle.version")
+	std::cout << "Build Platform: "
+			<< so_build_resource.get_property("build.platform")
 			<< std::endl;
-	std::cout << "       Java: "
-			<< so_build_resource.get_property("build.java.version")
+	std::cout << "Build Timestamp: "
+			<< so_build_resource.get_property("build.timestamp")
 			<< std::endl;
 
 	// Load UUID
-	std::string uuid = generate_uuid();
+	const std::string uuid = generate_uuid();
 
 	// Begin connection routine
 	long iteration = 0;

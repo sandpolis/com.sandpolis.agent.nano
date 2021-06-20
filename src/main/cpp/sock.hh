@@ -13,10 +13,6 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 
-#include "com/sandpolis/core/net/message.pb.h"
-#include "com/sandpolis/core/net/msg/msg_cvid.pb.h"
-#include "com/sandpolis/core/instance/metatypes.pb.h"
-
 // The maximum number of bytes that a single protobuf varint can occupy
 #define MAX_VARINT_WIDTH 5
 
