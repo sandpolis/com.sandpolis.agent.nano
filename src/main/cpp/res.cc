@@ -7,17 +7,17 @@
 //  as published by the Mozilla Foundation.                                   //
 //                                                                            //
 //============================================================================//
-#include "util/resources.hh"
+#include "res.hh"
 #include <unistd.h>
 
-bool s7s::resource_load(std::string path, Resource &output) {
+bool s7s::res::resource_load(std::string path, Resource &output) {
 
 	char readlink[32];
 	std::uintmax_t exe_size;
 
 	// Determine executable path
 	sprintf(readlink, "readlink /proc/%d/exe", getpid());
-	std::string exe = s7s::exec(readlink);
+	std::string exe = s7s::util::exec(readlink);
 
 	try {
 		exe_size = fs::file_size(exe);

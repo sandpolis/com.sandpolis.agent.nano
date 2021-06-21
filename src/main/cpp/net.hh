@@ -10,6 +10,8 @@
 #ifndef NET_H
 #define NET_H
 
+#include "msg.hh"
+
 #include <errno.h>
 #include <netdb.h>
 #include <resolv.h>
@@ -29,11 +31,15 @@ namespace s7s::net {
 
 	class Sock {
 
-		// The socket file descriptor
-		const int sockfd;
-
 		// This endpoint's UUID
 		const std::string uuid;
+
+		const std::string remote_host;
+
+		const std::string remote_port;
+
+		// The socket file descriptor
+		int sockfd;
 
 		// This endpoint's CVID
 		int cvid;
@@ -55,7 +61,8 @@ namespace s7s::net {
 		int ComputeVarint32Width(int value);
 
 	public:
-		Sock(std::string _uuid, int sfd) : uuid(_uuid), sockfd(sfd) {
+		Sock(std::string _uuid, std::string _remote_host, std::string _remote_port)
+			: uuid(_uuid), remote_host(_remote_host), remote_port(_remote_port) {
 		}
 
 		bool Connect();
@@ -64,10 +71,10 @@ namespace s7s::net {
 		bool CvidHandshake();
 
 		// Serialize and send the given message to the remote host.
-		bool Send(const core::net::MSG &msg);
+		bool Send(const s7s::msg::MSG &msg);
 
 		// Receive and parse a message from the remote host.
-		bool Recv(core::net::MSG &msg);
+		bool Recv(s7s::msg::MSG &msg);
 	};
 }
 

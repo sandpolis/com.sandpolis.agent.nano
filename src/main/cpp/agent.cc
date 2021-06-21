@@ -14,23 +14,22 @@
 #include <string>
 #include <thread>
 
-#include "sock.hh"
-#include "util/net.hh"
-#include "util/resources.hh"
-#include "util/uuid.hh"
+#include "net.hh"
+#include "res.hh"
+#include "util.hh"
 
 int main(int argc, char **argv) {
 
 	// Load build metadata from embedded resource file
-	s7s::PropertiesResource so_build_resource;
-	if (!s7s::resource_load("build.properties", so_build_resource)) {
+	s7s::res::PropertiesResource so_build_resource;
+	if (!s7s::res::resource_load("build.properties", so_build_resource)) {
 		std::cerr << "Failed to parse build.properties" << std::endl;
 		return 1;
 	}
 
 	// Load configuration from resource file
-	s7s::PropertiesResource so_config_resource;
-	if (!s7s::resource_load("agent.properties", so_config_resource)) {
+	s7s::res::PropertiesResource so_config_resource;
+	if (!s7s::res::resource_load("agent.properties", so_config_resource)) {
 		std::cerr << "Failed to parse agent.properties" << std::endl;
 		return 1;
 	}
@@ -46,11 +45,15 @@ int main(int argc, char **argv) {
 			<< std::endl;
 
 	// Load UUID
-	const std::string uuid = generate_uuid();
+	const std::string uuid = s7s::util::generate_uuid();
 
-	// Begin connection routine
+	// Load server info
+	const std::string server_address = so_config_resource.get_property("server.address");
+	const std::string server_port = so_config_resource.get_property("server.port");
+
 	long iteration = 0;
 
+	// Begin connection routine
 	for (;; iteration++) {
 
 		s7s::net::Sock sock(uuid, server_address, server_port);
@@ -61,7 +64,6 @@ int main(int argc, char **argv) {
 				return 0;
 			}
 		}
-		std::this_thread::sleep_for(
-		std::chrono::milliseconds(loop_config.cooldown()));
+		std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 	}
 }

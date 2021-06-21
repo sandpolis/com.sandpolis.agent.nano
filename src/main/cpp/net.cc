@@ -7,44 +7,41 @@
 //  as published by the Mozilla Foundation.                                   //
 //                                                                            //
 //============================================================================//
-#include "util/net.hh"
+#include "net.hh"
+#include <iostream>
 
-int s7s::net::OpenConnection(const std::string _hostname, const int _port) {
-	const char *hostname = _hostname.c_str();
-	char port[32];
-	sprintf(port, "%d", _port);
+bool s7s::net::Sock::Connect() {
 
 	struct addrinfo hints = { 0 }, *addrs;
 	hints.ai_family = AF_UNSPEC;
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_protocol = IPPROTO_TCP;
 
-	const int status = getaddrinfo(hostname, port, &hints, &addrs);
+	const int status = getaddrinfo(remote_host.c_str(), remote_port.c_str(), &hints, &addrs);
 	if (status != 0) {
-		fprintf(stderr, "%s: %s\n", hostname, gai_strerror(status));
+		fprintf(stderr, "%s: %s\n", remote_host, gai_strerror(status));
 	}
 
-	int sfd;
 	for (struct addrinfo *addr = addrs; addr != nullptr; addr = addr->ai_next) {
-		sfd = socket(addrs->ai_family, addrs->ai_socktype, addrs->ai_protocol);
-		if (sfd == -1) {
+		sockfd = socket(addrs->ai_family, addrs->ai_socktype, addrs->ai_protocol);
+		if (sockfd == -1) {
 			continue;
 		}
 
-		if (connect(sfd, addr->ai_addr, addr->ai_addrlen) == 0) {
+		if (connect(sockfd, addr->ai_addr, addr->ai_addrlen) == 0) {
 			// Connection success
-			break;
+			return true;
 		}
 
-		close(sfd);
-		sfd = -1;
+		close(sockfd);
+		sockfd = -1;
 	}
 
 	freeaddrinfo(addrs);
-	return sfd;
+	return false;
 }
 
-void Sock::WriteVarint32(char *buffer, int value) {
+void s7s::net::Sock::WriteVarint32(char *buffer, int value) {
 	for (int i = 0; i < MAX_VARINT_WIDTH; ++i) {
 		if ((value & ~0x7f) == 0) {
 			buffer[i] = value;
@@ -56,7 +53,7 @@ void Sock::WriteVarint32(char *buffer, int value) {
 	}
 }
 
-int Sock::ReadVarint32(char *buffer) {
+int s7s::net::Sock::ReadVarint32(char *buffer) {
 
 	char tmp = buffer[0];
 	if (tmp >= 0) {
@@ -86,7 +83,7 @@ int Sock::ReadVarint32(char *buffer) {
 	}
 }
 
-int Sock::ComputeVarint32Width(int value) {
+int s7s::net::Sock::ComputeVarint32Width(int value) {
 	if ((value & (0xffffffff << 7)) == 0)
 		return 1;
 	if ((value & (0xffffffff << 14)) == 0)
@@ -99,7 +96,7 @@ int Sock::ComputeVarint32Width(int value) {
 	return MAX_VARINT_WIDTH;
 }
 
-bool Sock::CvidHandshake() {
+bool s7s::net::Sock::CvidHandshake() {
 
 	core::net::MSG rq;
 	core::net::MSG rs;
@@ -133,7 +130,7 @@ bool Sock::CvidHandshake() {
 	return true;
 }
 
-bool Sock::Send(const core::net::MSG &msg) {
+bool s7s::net::Sock::Send(const s7s::msg::MSG &msg) {
 
 	int payload_size = msg.ByteSize();
 	int header_size = ComputeVarint32Width(payload_size);
@@ -161,7 +158,7 @@ bool Sock::Send(const core::net::MSG &msg) {
 	return true;
 }
 
-bool Sock::Recv(core::net::MSG &msg) {
+bool s7s::net::Sock::Recv(s7s::msg::MSG &msg) {
 	char buffer[1024];
 
 	int r = recv(sockfd, buffer, 1024, 0);

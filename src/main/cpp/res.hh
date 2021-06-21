@@ -10,7 +10,7 @@
 #ifndef RESOURCES_H
 #define RESOURCES_H
 
-#include "util/exec.hh"
+#include "util.hh"
 #include <cstring>
 #include <fcntl.h>
 #include <filesystem>
@@ -22,7 +22,7 @@
 
 namespace fs = std::filesystem;
 
-namespace s7s::resources {
+namespace s7s::res {
 
 	// The longest valid resource path
 	#define MAX_PATH 64
